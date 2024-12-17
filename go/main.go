@@ -71,9 +71,17 @@ func ReadProductFirstByCode(db gorm.DB, product *Product, code string) {
 
 // Update
 func UpdateByCode(db gorm.DB, product *Product, code string) {
-	var oldAlbum Album
-	oldAlbum.ID = id
-	db.Model(oldAlbum).Updates(album)
+	// var oldAlbum Album
+	// oldAlbum.ID = id
+	// db.Model(oldAlbum).Updates(album)
+	//
+	// // Update - update product's price to 200
+	// db.Model(&product).Update("Price", 200)
+	// // Update - update multiple fields
+	// db.Model(&product).Updates(Product{Price: 200, Code: "F42"}) // non-zero fields
+	// db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
+	// fmt.Printf("product.Code=%s\n", product.Code)
+
 }
 
 // // Delete
