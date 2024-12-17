@@ -4,7 +4,6 @@ import (
 	// "database/sql"
 	"fmt"
 
-	// "gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -26,26 +25,12 @@ type Product struct {
 func main() {
 	fmt.Printf("main---->\n")
 
-	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	// dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 	dsn := "host=db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	// dsn := "root:password@tcp(127.0.0.1:3306)/testdb?charset=utf8mb4&parseTime=True&loc=Local"
-	// db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+
 	if err != nil {
 		panic("failed to connect database")
 	}
-	// dsn := "root:password@tcp(127.0.0.1:3306)/testdb?charset=utf8mb3&parseTime=True&loc=Local"
-	// sqldb, err := sql.Open("mysql", dsn)
-	// if err != nil {
-	// 	panic("failed to open database")
-	// }
-	// db, err := gorm.Open(mysql.New(mysql.Config{
-	// 	Conn: sqldb,
-	// }), &gorm.Config{})
-	// if err != nil {
-	// 	panic("failed to connect database")
-	// }
 
 	// Migrate the schema
 	db.AutoMigrate(&Product{})
@@ -55,63 +40,42 @@ func main() {
 
 	// Read
 	var product Product
-	db.First(&product, 1)                 // find product with integer primary key
+	// db.First(&product, 1)                 // find product with integer primary key
 	db.First(&product, "code = ?", "D42") // find product with code D42
+
+	fmt.Printf("product.Code=%s\n", product.Code)
 
 	// Update - update product's price to 200
 	db.Model(&product).Update("Price", 200)
 	// Update - update multiple fields
 	db.Model(&product).Updates(Product{Price: 200, Code: "F42"}) // non-zero fields
 	db.Model(&product).Updates(map[string]interface{}{"Price": 200, "Code": "F42"})
+	fmt.Printf("product.Code=%s\n", product.Code)
 
 	// Delete - delete product
 	db.Delete(&product, 1)
+	fmt.Printf("product.Code=%s\n", product.Code)
+
 	fmt.Printf("<----main\n")
 }
 
-// // Migrate the schema
-// func Migrate() {
-//         db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-//         if err != nil {
-//                 panic("failed to connect database")
-//         }
-//
-//         db.AutoMigrate(&Album{})
-// }
-//
-// // Create
-// func Create(album Album) {
-//         db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-//         if err != nil {
-//                 panic("failed to connect database")
-//         }
-//
-//         db.Create(&album)
-// }
-//
-// // Read
-// func Read() {
-//         db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-//         if err != nil {
-//                 panic("failed to connect database")
-//         }
-//
-//         var album Album
-//         db.First(&album, 1)
-// }
-//
-// // Update
-// func UpdateById(id string, album Album) {
-//         db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-//         if err != nil {
-//                 panic("failed to connect database")
-//         }
-//
-//         var oldAlbum Album
-//         oldAlbum.ID = id
-//         db.Model(oldAlbum).Updates(album)
-// }
-//
+// Create
+func CreateProduct(db gorm.DB, product Product) {
+	db.Create(&product)
+}
+
+// Read
+func ReadProductFirstByCode(db gorm.DB, product *Product, code string) {
+	db.First(&product, code)
+}
+
+// Update
+func UpdateByCode(db gorm.DB, product *Product, code string) {
+	var oldAlbum Album
+	oldAlbum.ID = id
+	db.Model(oldAlbum).Updates(album)
+}
+
 // // Delete
 // func Delete(album Album) {
 //         db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
