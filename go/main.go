@@ -1,8 +1,11 @@
 package main
 
 import (
+	// "database/sql"
 	"fmt"
-	"gorm.io/driver/mysql"
+
+	// "gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -24,11 +27,25 @@ func main() {
 	fmt.Printf("main---->\n")
 
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	// dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "host=db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	// dsn := "root:password@tcp(127.0.0.1:3306)/testdb?charset=utf8mb4&parseTime=True&loc=Local"
+	// db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
+	// dsn := "root:password@tcp(127.0.0.1:3306)/testdb?charset=utf8mb3&parseTime=True&loc=Local"
+	// sqldb, err := sql.Open("mysql", dsn)
+	// if err != nil {
+	// 	panic("failed to open database")
+	// }
+	// db, err := gorm.Open(mysql.New(mysql.Config{
+	// 	Conn: sqldb,
+	// }), &gorm.Config{})
+	// if err != nil {
+	// 	panic("failed to connect database")
+	// }
 
 	// Migrate the schema
 	db.AutoMigrate(&Product{})
